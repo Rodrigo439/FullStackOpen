@@ -1,0 +1,23 @@
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #4CAF50; /* Verde para éxito - green for success */
+  color: white;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out; /* Transición para la opacidad - transition for the oppacity */
+}
+
+.notification.success {
+  background-color: #4CAF50; /* Verde para éxito - green for success */
+}
+
+.notification.error {
+  background-color: #f44336; /* Rojo para error - red for error */
+}
+
+.notification.hidden {
+  opacity: 0; /* Ocultar la notificación - hide notification*/
+}
