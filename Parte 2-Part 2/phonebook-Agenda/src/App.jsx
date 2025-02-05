@@ -16,7 +16,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/api/persons')
+      .get('/api/persons')
       .then((response) => setPersons(response.data))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
