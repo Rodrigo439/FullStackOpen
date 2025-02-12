@@ -29,7 +29,7 @@ const App = () => {
   
     if (existingPerson) {
       if (window.confirm(`${newName} is already in the phonebook. Do you want to update their number?`)) {
-        // Si el usuario confirma, actualizamos el número
+        // If the user confirms, we update the number
         axios
           .put(`${baseUrl}/${existingPerson.id}`, newPerson)
           .then((response) => {
@@ -48,7 +48,7 @@ const App = () => {
           });
       }
     } else {
-      // Si la persona no existe, creamos una nueva
+      // If the person doesn't exist, we create a new one.
       addPerson(newPerson, persons, setPersons)
         .then(() => {
           setNewName('');
