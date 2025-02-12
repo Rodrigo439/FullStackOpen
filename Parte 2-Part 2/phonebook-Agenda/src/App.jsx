@@ -24,21 +24,48 @@ const App = () => {
   const handleAddPerson = (event) => {
     event.preventDefault();
     const newPerson = { name: newName, number: newNumber };
-
-    addPerson(newPerson, persons, setPersons)
-      .then(() => {
-        setNewName('');
-        setNewNumber('');
-        setNotificationMessage('Person added successfully!');
-        setNotificationType('success');
-        setShowNotification(true);
-      })
-      .catch(() => {
-        setNotificationMessage('Error adding person.');
-        setNotificationType('error');
-        setShowNotification(true);
-      });
+  
+    const existingPerson = persons.find(person => person.name === newPerson.name);
+  
+    if (existingPerson) {
+      if (window.confirm(`${newName} is already in the phonebook. Do you want to update their number?`)) {
+        // Si el usuario confirma, actualizamos el número
+        axios
+          .put(`${baseUrl}/${existingPerson.id}`, newPerson)
+          .then((response) => {
+            setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person));
+            setNewName('');
+            setNewNumber('');
+            setNotificationMessage('Person updated successfully!');
+            setNotificationType('success');
+            setShowNotification(true);
+          })
+          .catch((error) => {
+            const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+            setNotificationMessage(errorMessage);
+            setNotificationType('error');
+            setShowNotification(true);
+          });
+      }
+    } else {
+      // Si la persona no existe, creamos una nueva
+      addPerson(newPerson, persons, setPersons)
+        .then(() => {
+          setNewName('');
+          setNewNumber('');
+          setNotificationMessage('Person added successfully!');
+          setNotificationType('success');
+          setShowNotification(true);
+        })
+        .catch((error) => {
+          const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+          setNotificationMessage(errorMessage);
+          setNotificationType('error');
+          setShowNotification(true);
+        });
+    }
   };
+  
 
   const handleDeletePerson = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
@@ -63,7 +90,13 @@ const App = () => {
       {showNotification && <div className={`notification ${notificationType}`}>{notificationMessage}</div>}
       <Filter filter={filter} handleFilterChange={(e) => setFilter(e.target.value)} />
       <h3>Add a new</h3>
-      <PersonForm newName={newName} newNumber={newNumber} handleNameChange={(e) => setNewName(e.target.value)} handleNumberChange={(e) => setNewNumber(e.target.value)} addPerson={handleAddPerson} />
+      <PersonForm 
+        newName={newName} 
+        newNumber={newNumber} 
+        handleNameChange={(e) => setNewName(e.target.value)} 
+        handleNumberChange={(e) => setNewNumber(e.target.value)} 
+        addPerson={handleAddPerson} 
+      />
       <h3>Numbers</h3>
       <Persons personsToShow={persons.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))} onDelete={handleDeletePerson} />
     </div>
